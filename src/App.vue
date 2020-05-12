@@ -1,5 +1,10 @@
 <template>
-    <div id="app">
+    <div class="app">
+    <ribbon
+        url="https://github.com/arnemileswinter/graph-jiz"
+        text="Fork me on GitHub!"
+    />
+    <div class="container">
         <text-area
                 @change="onMarkupChange"
                 :hasErrored="hasErrored"
@@ -11,14 +16,16 @@
                @parseError="onParseError"
         />
     </div>
+    </div>
 </template>
 
 <script>
     import TextArea from "./TextArea";
     import Graph from "./Graph";
+    import Ribbon from "vue-ribbon";
 
     export default {
-        components: {TextArea, Graph},
+        components: {TextArea, Graph, Ribbon},
         data() {
             return {
                 markup: '',
@@ -47,13 +54,13 @@
         margin: 0;
     }
 
-    #app {
+    .container {
         display: flex;
         height: 100vh;
         justify-content: left;
     }
 
-    #app > * {
+    .container > * {
         min-height: 100%;
         width: 100%;
     }
