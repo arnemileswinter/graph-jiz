@@ -11,12 +11,14 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
+    "codemirror": "^5.53.2",
     "core-js": "^3.6.4",
     "mathjax": "^3.0.5",
     "prismjs": "^1.20.0",
     "vis-network": "^7.6.4",
     "vue": "^2.6.11",
-    "vue-prism-editor": "^0.6.1"
+    "vue-prism-editor": "^0.6.1",
+    "vue-ribbon": "^1.0.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.3.0",
