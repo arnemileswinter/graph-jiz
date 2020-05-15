@@ -12,23 +12,22 @@
                 :errorCol="errorCol"
         >
         </text-area>
-        <graph :markup="markup"
-               @parseError="onParseError"
-        />
+        <graph :parsed="parsed"/>
     </div>
     </div>
 </template>
 
 <script>
-    import TextArea from "./TextArea";
-    import Graph from "./Graph";
-    import Ribbon from "vue-ribbon";
+import TextArea from "./TextArea";
+import Graph from "./Graph";
+import Ribbon from "vue-ribbon";
+import parse from "./parser/parser";
 
     export default {
         components: {TextArea, Graph, Ribbon},
         data() {
             return {
-                markup: '',
+                parsed: {},
                 hasErrored: false,
                 errorLine: -1,
                 errorCol: -1
@@ -38,11 +37,19 @@
             onMarkupChange(newMarkup) {
                 this.hasErrored = false;
                 this.markup = newMarkup;
-            },
-            onParseError(evt) {
-                this.errorLine = evt.line;
-                this.errorCol = evt.col;
-                this.hasErrored = true;
+
+                try {
+                    this.parsed = parse(this.markup);
+                    this.drawGraph();
+                } catch(e) {
+                    const message = "" + e.message;
+                    if(message.startsWith("Syntax")) {
+                        const firstErrorLine = message.split('\n')[0];
+                        this.errorLine = parseInt(firstErrorLine.split('line ', 2)[1].split(' ', 2)[0]);
+                        this.errorCol = parseInt(firstErrorLine.split('col ', 2)[1].split(':', 2)[0]);
+                    }
+                    this.hasErrored = true;
+                }
             }
         }
     }

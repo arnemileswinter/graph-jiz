@@ -4,45 +4,25 @@
 
 <script>
 import * as vis from "vis-network/standalone";
-import parse from "./parser/parser";
 import labelToSvg from './labelToSvg';
 
 export default {
     data() {
         return ({
-            parsed: [],
             nodeData: [],
             network: null,
             nodePositions: {}
         })
     },
     props: {
-        markup: {
-            type: String,
+        parsed: {
+            type: Object,
             required: true
         }
     },
     watch: {
-        markup() {
-            try {
-                this.parsed = parse(this.markup);
-                this.drawGraph();
-            } catch(e) {
-                this.parsed = [];
-
-                const message = "" + e.message;
-
-                if(message.startsWith("Syntax")) {
-                    const firstErrorLine = message.split('\n')[0];
-                    const line = parseInt(firstErrorLine.split('line ', 2)[1].split(' ', 2)[0]);
-                    const col = parseInt(firstErrorLine.split('col ', 2)[1].split(':', 2)[0]);
-                    this.$emit('parseError', {
-                        type: "syntax-error",
-                        line,
-                        col
-                    });
-                }
-            }
+        parsed() {
+            this.drawGraph();
         }
     },
     methods: {
