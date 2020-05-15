@@ -11,7 +11,9 @@ export default {
     data() {
         return ({
             parsed: [],
-            nodeData: []
+            nodeData: [],
+            network: null,
+            nodePositions: {}
         })
     },
     props: {
@@ -46,7 +48,10 @@ export default {
     methods: {
         fetchGraphVizNodes() {
             return new vis.DataSet(this.parsed.nodes.map((node) => {
+                const cachedPosition = this.nodePositions[node.name] || {};
+
                 return ({
+                    ...cachedPosition,
                     id: node.name,
                     color: {
                         border: '#000',
@@ -105,23 +110,39 @@ export default {
                 return edge;
             }));
         },
+        cacheNodePosition(nodeName){
+            const {x,y} = this.network.getPosition(nodeName);
+            this.nodePositions[nodeName] = {x,y};
+        },
+        cacheNodePositions(){
+            this.parsed.nodes.forEach(node => {
+                this.cacheNodePosition(node.name);
+            });
+        },
         drawGraph() {
-            const $el = this.$refs.graph;
-            $el.innerHTML = '';
-
             const nodes = this.fetchGraphVizNodes();
             const edges = this.fetchGraphVizEdges();
 
-            const container = $el;
             const data = {
                 nodes,
                 edges
             };
 
+            const $el = this.$refs.graph;
+            $el.innerHTML = '';
+
             let options = {
                 physics: false
             };
-            new vis.Network(container, data, options);
+
+            this.network = new vis.Network($el, data, options);
+            this.network.on('dragEnd', (e) => {
+                for(const nodeId of e.nodes) {
+                    this.cacheNodePosition(nodeId);
+                }
+            });
+
+            this.cacheNodePositions();
         }
     }
 }
