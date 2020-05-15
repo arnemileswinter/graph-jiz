@@ -5,6 +5,7 @@
 <script>
 import * as vis from "vis-network/standalone";
 import parse from "./parser/parser";
+import labelToSvg from './labelToSvg';
 
 export default {
     data() {
@@ -43,33 +44,8 @@ export default {
         }
     },
     methods: {
-        drawGraph() {
-            const mathJax = window.MathJax;
-
-            const $el = this.$refs.graph;
-            $el.innerHTML = '';
-
-            const labelToSvg = (labels, fallback = "") => {
-                const labelContent = labels.length === 0
-                    ? "\\textsf{ " + fallback + " }"
-                    : "\\begin{align*} "
-                    + labels.map(
-                        label => label.split('\n').map(line => "& \\textsf{ " + line + " } ").join("\\\\")
-                    ).join("\\\\")
-                    + "\\end{align*}";
-
-                const svgElement = mathJax.tex2svg(labelContent).children[0];
-
-                const svgWhiteBackground = document.createElement('style');
-                svgWhiteBackground.innerHTML = "svg {background-color: white; position: fixed; }";
-
-                svgElement.appendChild(svgWhiteBackground);
-
-                return svgElement.outerHTML;
-            };
-
-            const nodes = new vis.DataSet(this.parsed.nodes.map((node) => {
-
+        fetchGraphVizNodes() {
+            return new vis.DataSet(this.parsed.nodes.map((node) => {
                 return ({
                     id: node.name,
                     color: {
@@ -82,10 +58,10 @@ export default {
                     shape: "image",
                     image: "data:image/svg+xml;base64," + btoa(labelToSvg(node.labels, node.name)),
                     imagePadding: {
-                      top: 5,
-                      left: 5,
-                      right: 5,
-                      bottom: 5
+                        top: 5,
+                        left: 5,
+                        right: 5,
+                        bottom: 5
                     },
                     shapeProperties: {
                         useImageSize: true,
@@ -93,8 +69,9 @@ export default {
                     }
                 })
             }));
-
-            const edges = new vis.DataSet(this.parsed.connections.map(connection => {
+        },
+        fetchGraphVizEdges() {
+            return new vis.DataSet(this.parsed.connections.map(connection => {
                 let edge = {};
                 if(connection.variant === "arrow") {
                     edge.arrows = {to: {enabled: true}};
@@ -127,24 +104,23 @@ export default {
 
                 return edge;
             }));
+        },
+        drawGraph() {
+            const $el = this.$refs.graph;
+            $el.innerHTML = '';
+
+            const nodes = this.fetchGraphVizNodes();
+            const edges = this.fetchGraphVizEdges();
 
             const container = $el;
             const data = {
                 nodes,
                 edges
             };
+
             let options = {
                 physics: false
             };
-            if(this.seed) {
-                options = {
-                    ...options,
-                    layout: {
-                        randomSeed: "Notch"
-                    }
-                }
-            }
-
             new vis.Network(container, data, options);
         }
     }
