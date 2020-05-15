@@ -1,5 +1,7 @@
 # GraphJiz
-a minimal DOT alternative with a sleek syntax and math support.
+a minimal DOT alternative with a sleek syntax and math support in your browser!
+
+Make sure to [check out the demo](https://arnemileswinter.github.io/graph-jiz/).
 
 ### Usage & Syntax
 There are 4 connection types supported:
