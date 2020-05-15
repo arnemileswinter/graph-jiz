@@ -5,65 +5,64 @@
 </template>
 
 <script>
-    import CodeMirror from "codemirror";
-    import "codemirror/lib/codemirror.css";
+import CodeMirror from "codemirror";
+import "codemirror/lib/codemirror.css";
 
-    import introBoilerplate from "./intro-boilerplate.txt";
-
-    export default {
-        props: {
-            hasErrored: {type: Boolean, required: true},
-            errorLine: {type: Number, required: true},
-            errorCol: {type: Number, required: true}
+export default {
+    props: {
+        initialBoilerplate: {type:String, required: false, default: ''},
+        hasErrored: {type: Boolean, required: true},
+        errorLine: {type: Number, required: true},
+        errorCol: {type: Number, required: true}
+    },
+    data() {
+        return ({
+            codeMirror: null,
+            errorMarker: null
+        });
+    },
+    methods: {
+        onCodeMirrorChange() {
+            this.$emit('change', this.codeMirror.doc.getValue());
         },
-        data() {
-            return ({
-                codeMirror: null,
-                errorMarker: null
-            });
-        },
-        methods: {
-            onCodeMirrorChange() {
-                this.$emit('change', this.codeMirror.doc.getValue());
-            },
-            updateErrorMarker() {
-                if(this.errorMarker) {
-                    this.errorMarker.clear();
-                }
-                if(this.hasErrored) {
-                    this.errorMarker = this.codeMirror.doc.markText({
-                        line: this.errorLine - 1,
-                        ch: this.errorCol -1
-                    }, {
-                        line: this.errorLine - 1,
-                        ch: this.errorCol
-                    }, {
-                        className: 'syntax'
-                    });
-                }
+        updateErrorMarker() {
+            if(this.errorMarker) {
+                this.errorMarker.clear();
             }
-        },
-        mounted() {
-            const codeMirror = CodeMirror(this.$el, {
-                lineNumbers: true
-            });
-            codeMirror.setSize("100%", "100%");
-            codeMirror.on("change", this.onCodeMirrorChange);
-            this.codeMirror = codeMirror;
-            codeMirror.doc.setValue(introBoilerplate);
-        },
-        watch: {
-            errorLine() {
-                this.updateErrorMarker();
-            },
-            errorCol() {
-                this.updateErrorMarker();
-            },
-            hasErrored() {
-                this.updateErrorMarker();
+            if(this.hasErrored) {
+                this.errorMarker = this.codeMirror.doc.markText({
+                    line: this.errorLine - 1,
+                    ch: this.errorCol -1
+                }, {
+                    line: this.errorLine - 1,
+                    ch: this.errorCol
+                }, {
+                    className: 'syntax'
+                });
             }
         }
+    },
+    mounted() {
+        const codeMirror = CodeMirror(this.$el, {
+            lineNumbers: true
+        });
+        codeMirror.setSize("100%", "100%");
+        codeMirror.on("change", this.onCodeMirrorChange);
+        this.codeMirror = codeMirror;
+        codeMirror.doc.setValue(this.initialBoilerplate);
+    },
+    watch: {
+        errorLine() {
+            this.updateErrorMarker();
+        },
+        errorCol() {
+            this.updateErrorMarker();
+        },
+        hasErrored() {
+            this.updateErrorMarker();
+        }
     }
+}
 </script>
 
 <style>

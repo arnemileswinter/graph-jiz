@@ -1,5 +1,5 @@
 module.exports = {
-    publicPath: 'https://arnemileswinter.github.io/graph-jiz/',
+    publicPath: '',
     configureWebpack: {
         module: {
             rules: [

@@ -119,10 +119,12 @@ export default {
             this.network.on('dragEnd', (e) => {
                 for(const nodeId of e.nodes) {
                     this.cacheNodePosition(nodeId);
+                    this.$emit('nodePositionsChanged', this.nodePositions);
                 }
             });
 
             this.cacheNodePositions();
+            this.$emit('nodePositionsChanged', this.nodePositions);
         }
     }
 }
