@@ -53,7 +53,7 @@
     transition: opacity 200ms linear;
 }
 .modal[data-open="true"] {
-    opacity: 100%;
+    opacity: 1;
     pointer-events: inherit;
 }
 
