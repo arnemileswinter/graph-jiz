@@ -15,7 +15,7 @@
     "copy-to-clipboard": "^3.3.1",
     "core-js": "^3.6.4",
     "mathjax": "^3.0.5",
-    "prismjs": "^1.21.0",
+    "prismjs": "^1.24.0",
     "vis-network": "^7.6.4",
     "vue": "^2.6.11",
     "vue-prism-editor": "^0.6.1",
